@@ -18,6 +18,27 @@ app.get('/api/quotes/random', (req, res, next) => {
 });
 
 app.get('/api/quotes', (req, res, next) => {
-  if (req.param('person') === '') res.send(quotes)
-  //res.send({quotes: quotes})
+  let personArray = [];
+  if (req.query.person) {
+    for (var x = 0; x < quotes.length; x++) {
+        if (quotes[x].person === req.query.person) {
+          personArray.push(quotes[x])
+        }
+    }
+  } else {
+    personArray = quotes;
+  }
+  res.send({ quotes: personArray});
 });
+
+app.post('/api/quotes', (req, res, next) => {
+  const person = req.query.person;
+  const quote = req.query.quote;
+  const newQuote = { quote: quote, person: person }
+  if (person && quote) {
+    quotes.push(newQuote)
+    res.status(201).send(quotes);
+  } else {
+    res.status(400).send();
+  }
+})
